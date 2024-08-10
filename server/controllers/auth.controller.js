@@ -1,11 +1,19 @@
-import { signinValidation } from "../validation/auth.validation.js";
-import { generateUserName, hashPassword } from "../../utils.js";
+import {
+  signinValidation,
+  signupValidation,
+} from "../validation/auth.validation.js";
+import {
+  comparePassword,
+  generateUserName,
+  genTokenSetCookie,
+  hashPassword,
+} from "../../utils.js";
 import Users from "../Schema/User.js";
 
 export const signup = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
-    const { error } = signinValidation.validate({ fullName, email, password });
+    const { error } = signupValidation.validate({ fullName, email, password });
     if (error)
       return res.status(403).json({ message: error.details[0].message });
     const isEmailNotUnique = await Users.exists({
@@ -29,7 +37,8 @@ export const signup = async (req, res) => {
     const userToSend = await Users.findById(user._id).select(
       "-personal_info.password"
     );
-    res.status(201).json({ success: true, data: userToSend });
+    genTokenSetCookie(userToSend._id, res);
+    res.status(201).json(userToSend);
   } catch (error) {
     console.log("Error: on signup => ", error.message);
     res
@@ -39,7 +48,32 @@ export const signup = async (req, res) => {
 };
 export const signin = async (req, res) => {
   try {
-  } catch (error) {}
+    const { email, password } = req.body;
+    const { error } = signinValidation.validate({ email, password });
+    if (error)
+      return res.status(403).json({ message: error.details[0].message });
+    const user = await Users.findOne({ "personal_info.email": email });
+    if (!user)
+      return res.status(404).json({ message: "Incorrect email adress" });
+    const isMatch = await comparePassword(
+      user.personal_info.password,
+      password
+    );
+    console.log(isMatch);
+
+    if (!isMatch)
+      return res.status(403).json({ message: "Incorrect password" });
+    const userToSend = await Users.findById(user._id).select(
+      "-personal_info.password"
+    );
+    genTokenSetCookie(userToSend._id, res);
+    res.status(200).json(userToSend);
+  } catch (error) {
+    console.log("Error: on signin => ", error.message);
+    res
+      .status(error.status || 500)
+      .json({ message: error.message || "Internal server error" });
+  }
 };
 export const signout = async (req, res) => {
   try {

@@ -28,10 +28,10 @@ const hashPassword = async (password) => {
     console.log("Error hashing password", error.message);
   }
 };
-const comparePassword = async (hashedPassword, password) => {
+const comparePassword = async (encriptedPassword, password) => {
   try {
-    const isCorrectPassword = await bcrypt.compare(password, hashedPassword);
-    return isCorrectPassword;
+    const isMatch = await bcrypt.compare(password, encriptedPassword);
+    return isMatch;
   } catch (error) {
     console.log("Error compare password", error.message);
   }
