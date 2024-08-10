@@ -75,7 +75,14 @@ export const signin = async (req, res) => {
       .json({ message: error.message || "Internal server error" });
   }
 };
-export const signout = async (req, res) => {
+export const signout = (req, res) => {
   try {
-  } catch (error) {}
+    res.clearCookie("blogToken");
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.log("Error: on singout => ", error.message);
+    res
+      .status(error.status || 500)
+      .json({ message: error.message || "Internal server error" });
+  }
 };
