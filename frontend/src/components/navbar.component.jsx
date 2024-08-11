@@ -1,8 +1,17 @@
 import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
+import { useAuthContext } from "../context/AuthContext";
+import UserNavigationPanel from "./user-navigation.component";
 
 const Navbar = () => {
   const [searchBoxVisiblity, setSearchBoxVisiblity] = useState(false);
+  const [toggleLinks, setToggleLinks] = useState(false);
+  const { user } = useAuthContext();
+  const handleBlur = () => {
+    setTimeout(() => {
+      setToggleLinks(false);
+    }, 140);
+  };
   return (
     <>
       <header className="navbar">
@@ -30,16 +39,45 @@ const Navbar = () => {
           >
             <i className="fi fi-rr-search text-xl"></i>
           </button>
-          <Link to="/editor" className="hidden md:flex gap-2 link rounded-lg">
+          <Link
+            to="/editor"
+            className="hidden md:flex gap-2 link rounded-lg bg-grey/70"
+          >
             <i className="fi fi-rr-file-edit"></i>
             <p>Write</p>
           </Link>
-          <Link className="btn-dark py-2" to="/signin">
-            Sign In
-          </Link>
-          <Link className="btn-light py-2 hidden md:block" to="/signup">
-            Sign Up
-          </Link>
+          {!user ? (
+            <>
+              <Link className="btn-dark py-2" to="/signin">
+                Sign In
+              </Link>
+              <Link className="btn-light py-2 hidden md:block" to="/signup">
+                Sign Up
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link to="/dashboard/notification">
+                <button className="w-12 h-12 rounded-full bg-grey relative hover:bg-black/10 flex items-center justify-center">
+                  <i className="fi fi-rr-bell text-lg"></i>
+                </button>
+              </Link>
+              <div
+                className="relative"
+                onClick={() => setToggleLinks((prev) => !prev)}
+                onBlur={handleBlur}
+              >
+                <button className="w-12 h-12">
+                  <img
+                    src={user.profile_img}
+                    alt="profile image"
+                    className="w-full h-full border border-grey/90 object-cover rounded-full"
+                  />
+                </button>
+                {toggleLinks && <UserNavigationPanel />}
+              </div>
+            </>
+          )}
         </div>
       </header>
       <main>

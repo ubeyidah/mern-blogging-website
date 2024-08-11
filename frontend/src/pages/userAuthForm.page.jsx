@@ -1,17 +1,19 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/input.component";
 import AnimationWrapper from "../common/page-animation";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import {
   signinValidation,
   signupValidation,
 } from "../validation/auth.validation.js";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { setSession } from "../common/session.jsx";
+import { useAuthContext } from "../context/AuthContext.jsx";
 
 const UserAuth = ({ type }) => {
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { user, configUser } = useAuthContext();
   const submitForm = async (e) => {
     e.preventDefault();
     try {
@@ -40,10 +42,11 @@ const UserAuth = ({ type }) => {
         `/api/auth/${type.replace("-", "")}`,
         authData
       );
-      setSession(data);
+      configUser(data);
+      toast.success(`${type.replace("-", " ")} successfull`);
+      navigate("/", { replace: true });
     } catch (error) {
       toast.error(JSON.parse(error.request.response).message);
-      console.log(error);
     } finally {
       setLoading(false);
     }
