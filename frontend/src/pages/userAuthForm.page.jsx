@@ -54,8 +54,22 @@ const UserAuth = ({ type }) => {
   };
   const handleGoogleAuth = async (e) => {
     e.preventDefault();
-    const user = await authWithGoogle();
-    console.log(user);
+    try {
+      const { user } = await authWithGoogle();
+      if (!user) return;
+      const oauthData = {
+        fullName: user.displayName,
+        email: user.email,
+        profile_img: user.photoURL,
+      };
+
+      const { data } = await axios.post("/api/auth/oauth", oauthData);
+      configUser(data);
+      toast.success(`${type.replace("-", " ")} successfull`);
+      navigate("/", { replace: true });
+    } catch (error) {
+      toast.error(JSON.parse(error.request.response).message);
+    }
   };
   return (
     <AnimationWrapper keyValue={type}>

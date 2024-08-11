@@ -1,9 +1,19 @@
 import { Link } from "react-router-dom";
 import AnimationWrapper from "../common/page-animation";
 import { useAuthContext } from "../context/AuthContext";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 const UserNavigationPanel = () => {
   const { user, signout } = useAuthContext();
+  const logout = async () => {
+    try {
+      await axios.post("/api/auth/signout");
+      signout();
+    } catch (error) {
+      toast("Faild to sign out try agin later.");
+    }
+  };
 
   return (
     <AnimationWrapper
@@ -41,11 +51,11 @@ const UserNavigationPanel = () => {
         </Link>
         <button
           className="flex gap-2 link pl-8 py-4 w-full items-center"
-          onClick={signout}
+          onClick={logout}
         >
-          <i class="fi fi-rr-exit"></i>
+          <i className="fi fi-rr-exit"></i>
           <p className="leading-6 font-bold text-black">
-            <p>Sign Out</p>
+            <span className="block">Sign Out</span>
             <span className="text-sm text-dark-grey">@{user.userName}</span>
           </p>
         </button>

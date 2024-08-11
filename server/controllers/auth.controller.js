@@ -1,4 +1,5 @@
 import {
+  oauthValidation,
   signinValidation,
   signupValidation,
 } from "../validation/auth.validation.js";
@@ -84,6 +85,52 @@ export const signout = (req, res) => {
     res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     console.log("Error: on singout => ", error.message);
+    res
+      .status(error.status || 500)
+      .json({ message: error.message || "Internal server error" });
+  }
+};
+
+export const oauth = async (req, res) => {
+  try {
+    const { fullName, email, profile_img } = req.body;
+    const { error } = oauthValidation.validate({
+      fullName,
+      email,
+      profile_img,
+    });
+    if (error)
+      return res.status(400).json({ message: error.details[0].message });
+    const isUserExists = await Users.findOne({ "personal_info.email": email });
+    if (!isUserExists) {
+      const userName = await generateUserName(email);
+      const user = await Users({
+        personal_info: {
+          fullName,
+          email,
+          profile_img: profile_img,
+          userName,
+        },
+      }).save();
+      const userToSend = {
+        userName: user.personal_info.userName,
+        email: user.personal_info.email,
+        profile_img: user.personal_info.profile_img,
+      };
+      genTokenSetCookie(user._id, res);
+      return res.status(201).json(userToSend);
+    } else if (isUserExists) {
+      const userToSend = {
+        userName: isUserExists.personal_info.userName,
+        email: isUserExists.personal_info.email,
+        profile_img: isUserExists.personal_info.profile_img,
+      };
+      genTokenSetCookie(isUserExists._id, res);
+      return res.status(201).json(userToSend);
+    }
+    res.status(404).json({ message: "somting went wrong" });
+  } catch (error) {
+    console.log("Error: on oauth => ", error.message);
     res
       .status(error.status || 500)
       .json({ message: error.message || "Internal server error" });
