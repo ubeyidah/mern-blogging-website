@@ -9,6 +9,7 @@ import {
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useAuthContext } from "../context/AuthContext.jsx";
+import { authWithGoogle } from "../common/firebase.jsx";
 
 const UserAuth = ({ type }) => {
   const [loading, setLoading] = useState(false);
@@ -51,6 +52,11 @@ const UserAuth = ({ type }) => {
       setLoading(false);
     }
   };
+  const handleGoogleAuth = async (e) => {
+    e.preventDefault();
+    const user = await authWithGoogle();
+    console.log(user);
+  };
   return (
     <AnimationWrapper keyValue={type}>
       <section className="h-cover flex items-center justify-center">
@@ -89,7 +95,10 @@ const UserAuth = ({ type }) => {
             <p>Or</p>
             <hr className="w-1/2 border-black" />
           </div>
-          <button className="btn-dark w-full items-center flex gap-5 justify-center py-4">
+          <button
+            onClick={handleGoogleAuth}
+            className="btn-dark w-full items-center flex gap-5 justify-center py-4"
+          >
             <img src="imgs/google.png" alt="google logo" className="w-6" />
             <p>Continue with Google</p>
           </button>
