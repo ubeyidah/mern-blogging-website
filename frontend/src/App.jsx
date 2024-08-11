@@ -10,7 +10,7 @@ import Editor from "./pages/editor.pages";
 const App = () => {
   return (
     <>
-      <Toaster position="bottom-center" />
+      <Toaster position="top-left" />
       <Routes>
         <Route path="/" element={<Navbar />}>
           <Route index element={<Home />} />
