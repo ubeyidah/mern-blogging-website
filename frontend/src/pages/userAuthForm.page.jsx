@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { useAuthContext } from "../context/AuthContext.jsx";
 import { authWithGoogle } from "../common/firebase.jsx";
+import Spinner from "../components/Spinner.jsx";
 
 const UserAuth = ({ type }) => {
   const [loading, setLoading] = useState(false);
@@ -55,6 +56,7 @@ const UserAuth = ({ type }) => {
   const handleGoogleAuth = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const { user } = await authWithGoogle();
       if (!user) return;
       const oauthData = {
@@ -69,6 +71,8 @@ const UserAuth = ({ type }) => {
       navigate("/", { replace: true });
     } catch (error) {
       toast.error(JSON.parse(error.request.response).message);
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -99,10 +103,10 @@ const UserAuth = ({ type }) => {
           />
           <button
             type="submit"
-            className="btn-dark mb-14 center w-full rounded-lg"
+            className="btn-dark mb-14 center w-full rounded-lg flex items-center justify-center"
             disabled={loading}
           >
-            {loading ? "Loading..." : type.replace("-", " ")}
+            {loading ? <Spinner className="w-9" /> : type.replace("-", " ")}
           </button>
           <div className="relative w-full flex items-center gap-2 my-10 opacity-30 uppercase text-black font-bold">
             <hr className="w-1/2 border-black" />
@@ -112,9 +116,16 @@ const UserAuth = ({ type }) => {
           <button
             onClick={handleGoogleAuth}
             className="btn-dark w-full items-center flex gap-5 justify-center py-4"
+            disabled={loading}
           >
-            <img src="imgs/google.png" alt="google logo" className="w-6" />
-            <p>Continue with Google</p>
+            {loading ? (
+              <Spinner className="w-9" />
+            ) : (
+              <>
+                <img src="imgs/google.png" alt="google logo" className="w-6" />
+                <p>Continue with Google</p>
+              </>
+            )}
           </button>
           {type == "sign-in" ? (
             <p className="text-right mt-3 text-dark-grey">

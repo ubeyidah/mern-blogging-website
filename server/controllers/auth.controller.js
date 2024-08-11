@@ -111,6 +111,7 @@ export const oauth = async (req, res) => {
           profile_img: profile_img,
           userName,
         },
+        google_auth: true,
       }).save();
       const userToSend = {
         userName: user.personal_info.userName,
