@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Input from "../components/input.component";
 import AnimationWrapper from "../common/page-animation";
 import { useState } from "react";
@@ -14,6 +14,8 @@ import Spinner from "../components/Spinner.jsx";
 
 const UserAuth = ({ type }) => {
   const [loading, setLoading] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const message = searchParams.get("message") || "";
   const navigate = useNavigate();
   const { user, configUser } = useAuthContext();
   const submitForm = async (e) => {
@@ -86,6 +88,11 @@ const UserAuth = ({ type }) => {
           <h1 className="text-3xl font-gelasio capitalize text-center mb-16">
             {type == "sign-in" ? "Welcome back" : "Join us today"}
           </h1>
+          {message && (
+            <p className="text-center text-red font-bold mb-3 p-3 bg-red/10 rounded-md">
+              {message}
+            </p>
+          )}
           {type != "sign-in" && (
             <Input
               name="fullName"

@@ -1,7 +1,10 @@
-import React from "react";
+import { useState } from "react";
+import BlogEditor from "../components/blog-editor.component";
+import PublishForm from "../components/publish-form.component";
 
 const Editor = () => {
-  return <div>Editor</div>;
+  const [editorState, setEditorState] = useState("editor");
+  return <>{editorState === "editor" ? <BlogEditor /> : <PublishForm />}</>;
 };
 
 export default Editor;
