@@ -4,7 +4,9 @@ export const signupValidation = Joi.object({
   fullName: Joi.string()
     .pattern(/^[a-zA-Z]+( [a-zA-Z]+)*$/)
     .required(),
-  email: Joi.string().email().required(),
+  email: Joi.string()
+    .email({ tlds: { allow: false } })
+    .required(),
   password: Joi.string()
     .min(6)
     .max(30) // Maximum length of 30 characters
@@ -16,7 +18,9 @@ export const signupValidation = Joi.object({
     .required(),
 });
 export const signinValidation = Joi.object({
-  email: Joi.string().email().required(),
+  email: Joi.string()
+    .email({ tlds: { allow: false } })
+    .required(),
   password: Joi.string()
     .min(6)
     .max(30) // Maximum length of k30 characters

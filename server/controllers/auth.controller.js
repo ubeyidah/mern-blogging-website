@@ -15,12 +15,12 @@ export const signup = async (req, res) => {
     const { fullName, email, password } = req.body;
     const { error } = signupValidation.validate({ fullName, email, password });
     if (error)
-      return res.status(403).json({ message: error.details[0].message });
+      return res.status(400).json({ message: error.details[0].message });
     const isEmailNotUnique = await Users.exists({
       "personal_info.email": email,
     });
     if (isEmailNotUnique)
-      return res.status(403).json({ message: "Email already exists." });
+      return res.status(400).json({ message: "Email already exists." });
     const [hashedPassword, userName] = await Promise.all([
       hashPassword(password),
       generateUserName(email),
@@ -34,10 +34,12 @@ export const signup = async (req, res) => {
         password: hashedPassword,
       },
     }).save();
-    const userToSend = await Users.findById(user._id).select(
-      "-personal_info.password"
-    );
-    genTokenSetCookie(userToSend._id, res);
+    const userToSend = {
+      userName: user.personal_info.userName,
+      email: user.personal_info.email,
+      profile_img: user.personal_info.profile_img,
+    };
+    genTokenSetCookie(user._id, res);
     res.status(201).json(userToSend);
   } catch (error) {
     console.log("Error: on signup => ", error.message);
@@ -59,14 +61,15 @@ export const signin = async (req, res) => {
       user.personal_info.password,
       password
     );
-    console.log(isMatch);
 
     if (!isMatch)
       return res.status(403).json({ message: "Incorrect password" });
-    const userToSend = await Users.findById(user._id).select(
-      "-personal_info.password"
-    );
-    genTokenSetCookie(userToSend._id, res);
+    const userToSend = {
+      userName: user.personal_info.userName,
+      email: user.personal_info.email,
+      profile_img: user.personal_info.profile_img,
+    };
+    genTokenSetCookie(user._id, res);
     res.status(200).json(userToSend);
   } catch (error) {
     console.log("Error: on signin => ", error.message);
