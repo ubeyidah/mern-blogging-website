@@ -33,6 +33,7 @@ const BlogEditor = ({
   const handleBannerUpload = (e) => {
     const imgFile = e.target.files[0];
     if (imgFile) {
+      const toastId = toast.loading("uploading your blog banner");
       const storage = getStorage(app);
       const storageRef = ref(storage, `images/${imgFile.name}`);
       const uploadTask = uploadBytesResumable(storageRef, imgFile);
@@ -55,6 +56,7 @@ const BlogEditor = ({
           setBlog((prev) => ({ ...prev, banner: url }));
         }
       );
+      toast.dismiss(toastId);
     }
   };
   const editorRef = useRef(null);
@@ -62,7 +64,7 @@ const BlogEditor = ({
     if (!editorRef.current) {
       editorRef.current = new EditorJS({
         holder: "blogEditor",
-        data: "",
+        data: blog.content,
         tools: tools,
         placeholder: "Let's write an awesome story",
       });

@@ -24,7 +24,11 @@ const Editor = () => {
           setEditorState={setEditorState}
         />
       ) : (
-        <PublishForm blog={{ blogDetail, setBlogDetail }} />
+        <PublishForm
+          blog={blogDetail}
+          setBlog={setBlogDetail}
+          setEditorState={setEditorState}
+        />
       )}
     </>
   );
