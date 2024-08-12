@@ -8,11 +8,11 @@ export function setSession(value) {
     expiresAt: expirationDate.toISOString(),
   };
 
-  sessionStorage.setItem(key, JSON.stringify(item));
+  localStorage.setItem(key, JSON.stringify(item));
 }
 
 export function getSession(key = "user") {
-  const itemStr = sessionStorage.getItem(key);
+  const itemStr = localStorage.getItem(key);
   if (!itemStr) return null;
 
   const item = JSON.parse(itemStr);
@@ -20,12 +20,12 @@ export function getSession(key = "user") {
 
   if (new Date(item.expiresAt) < now) {
     // Item has expired
-    sessionStorage.removeItem(key);
+    localStorage.removeItem(key);
     return null;
   }
 
   return item.value;
 }
 export function deleteSession(key = "user") {
-  sessionStorage.removeItem(key);
+  localStorage.removeItem(key);
 }

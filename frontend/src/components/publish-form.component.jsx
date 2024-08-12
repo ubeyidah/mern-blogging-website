@@ -30,7 +30,7 @@ const PublishForm = ({ blog, setBlog, setEditorState }) => {
         </button>
         <div className="max-w-[550px] center">
           <p className="text-dark-grey mb-1">Preview</p>
-          <div className="w-full aspect-video rounded-lg overflow-hidden bg-grey mt-4">
+          <div className="w-full aspect-video  border-4  border-grey rounded-lg overflow-hidden bg-grey mt-4">
             <img src={blog.banner} alt={blog.title} />
           </div>
           <h1 className="text-4xl font-medium mt-2 leading-tight line-clamp-1">

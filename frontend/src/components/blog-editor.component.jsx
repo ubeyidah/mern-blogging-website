@@ -32,18 +32,19 @@ const BlogEditor = ({
   };
   const handleBannerUpload = (e) => {
     const imgFile = e.target.files[0];
+    if (progress == 0) setProgress(1);
     if (imgFile) {
-      const toastId = toast.loading("uploading your blog banner");
       const storage = getStorage(app);
       const storageRef = ref(storage, `images/${imgFile.name}`);
       const uploadTask = uploadBytesResumable(storageRef, imgFile);
-
+      setBlog((prev) => ({ ...prev, banner: "" }));
       uploadTask.on(
         "state_changed",
         (snapshot) => {
           const progressLen =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           setProgress(Math.floor(progressLen));
+          console.log(progressLen);
         },
         (error) => {
           toast.error("Faild to upload banner.");
@@ -56,7 +57,6 @@ const BlogEditor = ({
           setBlog((prev) => ({ ...prev, banner: url }));
         }
       );
-      toast.dismiss(toastId);
     }
   };
   const editorRef = useRef(null);
