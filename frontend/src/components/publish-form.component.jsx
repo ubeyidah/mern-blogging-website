@@ -18,6 +18,9 @@ const PublishForm = ({ blog, setBlog, setEditorState }) => {
       e.target.value = "";
     }
   };
+  const publishBlog = () => {
+    console.log(blog);
+  };
 
   return (
     <AnimationWrapper>
@@ -85,7 +88,9 @@ const PublishForm = ({ blog, setBlog, setEditorState }) => {
           <p className="mt-1 mb-4 text-dark-grey text-right">
             {tagLimit - blog.tags.length} Tags left
           </p>
-          <button className="btn-dark px-8">Publish</button>
+          <button className="btn-dark px-8" onClick={publishBlog}>
+            Publish
+          </button>
         </div>
       </section>
     </AnimationWrapper>
